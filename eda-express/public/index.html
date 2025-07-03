@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h4>This is html page rendered by express</h4>
+    <h3 id="userName"></h3>
+    <div id="registerDiv">
+      <input id="name" type="text" placeholder="Enter Name" />
+      <button id="register">Register</button>
+    </div>
+    <ul id="onlineUsers"></ul>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    let userName="";
+
+    let register = document.getElementById("register");
+    register.addEventListener("click", () => {
+      let name = document.getElementById("name").value;
+      socket.emit("register", name);
+      userName=name;
+      document.getElementById("userName").textContent=`Hello, ${userName}`;
+      document.getElementById("registerDiv").style.display="none";
+    });
+
+    socket.on("onlineUsers", (users) => {
+      let ul = document.getElementById("onlineUsers");
+      for (let user of users) {
+        console.log(user)
+        let li = document.createElement("li");
+        li.innerHTML = `<button onClick='startChat()'>${user}</button>`;
+        ul.appendChild(li);
+      }
+    });
+
+    function startChat() {
+      alert("Chat Started");
+    }
+  </script>
+</html>
