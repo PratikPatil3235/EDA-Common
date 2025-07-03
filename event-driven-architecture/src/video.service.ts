@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ViewerService } from './viewer.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { VideoCreatedEvent } from './video-created.event';
 
