@@ -15,10 +15,11 @@ io.on("connection", (socket) => {
   socket.on("register", (userName) => {
     onlineUsers.set(userName, socket.id);
     console.log("user Registered with ", userName, socket.id);
-     socket.emit("onlineUsers",Array.from(onlineUsers.entries()));
+    socket.emit("onlineUsers", Array.from(onlineUsers.entries()));
   });
 
- 
+  socket.on("sendMessage");
+
   socket.on("disconnect", () => {
     for (let [userName, socketId] of onlineUsers) {
       // console.log(userName,socketId);

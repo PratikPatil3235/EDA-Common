@@ -10,7 +10,7 @@ myEmitter.on("greet", (name) => {
 myEmitter.emit("greet", "Alice");
 
 myEmitter.on("bye", (name1, name2) => {
-  console.log("Bye Bye....",name1,name2);
+  console.log("Bye Bye....", name1, name2);
 });
 
 setTimeout(() => {
