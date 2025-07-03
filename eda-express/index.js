@@ -9,27 +9,43 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 const onlineUsers = new Map();
+let chatsArray = [];
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
+
   socket.on("register", (userName) => {
     onlineUsers.set(userName, socket.id);
-    console.log("user Registered with ", userName, socket.id);
-    socket.emit("onlineUsers", Array.from(onlineUsers.entries()));
+    console.log(`User registered: ${userName} (${socket.id})`);
+
+    io.emit("onlineUsers", Array.from(onlineUsers.entries()));
   });
 
-  socket.on("sendMessage");
+  socket.on("sendMessage", ({ fromUserName, toSendName, sendMessageText }) => {
+    chatsArray.push({ fromUserName, toSendName, sendMessageText });
+
+    const toSocketId = onlineUsers.get(toSendName);
+    if (toSocketId) {
+      io.to(toSocketId).emit("newMessage", {
+        fromUserName,
+        toSendName,
+        sendMessageText,
+      });
+    }
+
+    socket.emit("newMessage", { fromUserName, toSendName, sendMessageText });
+  });
 
   socket.on("disconnect", () => {
     for (let [userName, socketId] of onlineUsers) {
-      // console.log(userName,socketId);
-      if (socketId == socket.id) {
+      if (socketId === socket.id) {
         onlineUsers.delete(userName);
+        console.log(`User disconnected: ${userName} (${socket.id})`);
+        break;
       }
-      console.log(
-        `user with socket id ${socket.id} and name${userName} got disconnected`
-      );
     }
+
+    io.emit("onlineUsers", Array.from(onlineUsers.entries()));
   });
 });
 
